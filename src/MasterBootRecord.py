@@ -13,4 +13,4 @@ class MasterBootRecord:
 		with open("boot.bin","wb") as f:
 			f.write(self.code)
 
-MasterBootRecord(2,"Olá turma")
+MasterBootRecord(2,"Ola turma")
