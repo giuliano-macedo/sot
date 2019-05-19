@@ -66,3 +66,42 @@ class Emulator:
 	def __del__(self):
 		# del self.fs
 		pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""oi :D"""
