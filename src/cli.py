@@ -1,27 +1,24 @@
 from Emulator import Emulator
 from argparse import ArgumentParser
-
-#todo
-def arg_splitter(s):
-	return s.split(" ")
-#
+import shlex
 
 parser=ArgumentParser()
-parser.add_argument("f",help="img of the disk",type=str)
-args=parser.parse_arguments()
+parser.add_argument("image",help="image file of the disk",type=str)
+args=parser.parse_args()
 
-emu=Emulator(args.f)
+emu=Emulator(args.image)
 while True:
-	user=arg_splitter(input(":%s>"%emu.pwd))
+	user=shlex.split(input(":%s>"%emu.pwd))
 	if len(user)==0:
 		continue
 	if user[0]=="exit":
 		break
 	try:
-		print(emu.cli(user))
+		ans=emu.cli(*user)
+		print(ans) if ans!=None else print()
 	#todo
 	except Exception as e:
-		print(e)
+		raise e
 	#
 del emu
 
