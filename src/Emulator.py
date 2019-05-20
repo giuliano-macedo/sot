@@ -6,14 +6,16 @@ from core import FileTree,path
 class Emulator:
 	def __init__(self,filename):
 		#self.fs=FileSystem(filename)
-		# self.tree=self.fs.getFileTree()
 		self.cmdhooks={
 			"pwd":self.pwd,
 			"mkdir":self.mkdir,
 			"touch":self.touch,
 			"mv":self.mv,
-			"rm":self.rm
+			"rm":self.rm,
+			"cd":self.cd,
+			"ls":self.ls
 		}
+		# self.root=self.fs.getFileTree()
 		self.root=FileTree()
 		self.act=self.root
 		self.pwd="/"
@@ -26,8 +28,10 @@ class Emulator:
 	def __isdir(self,f):
 		return type(f)==str
 	#
-	# def cd(self,filename):
-		# p=self.root if path.parse(filename)[0]=="/" else self.act
+	def cd(self,filename):
+		p=self.root if path.parse(filename)[0]=="/" else self.act
+	def ls(self):
+		return "\n".join(self.act.t.keys())
 
 
 	def pwd(self):
@@ -66,42 +70,3 @@ class Emulator:
 	def __del__(self):
 		# del self.fs
 		pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""oi :D"""

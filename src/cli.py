@@ -17,6 +17,8 @@ while True:
 		ans=emu.cli(*user)
 		print(ans) if ans!=None else print()
 	#todo
+	except NotADirectoryError as e:
+		print("err: %s is not a directory"%e)
 	except Exception as e:
 		raise e
 	#
