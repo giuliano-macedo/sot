@@ -30,7 +30,10 @@ class Emulator:
 	#
 	def cd(self,filename):
 		p=self.root if path.parse(filename)[0]=="/" else self.act
-	def ls(self):
+	def ls(self,p=None):
+		if p!=None:
+			pass
+			#todo
 		return "\n".join(self.act.t.keys())
 
 
