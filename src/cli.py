@@ -8,7 +8,7 @@ args=parser.parse_args()
 
 emu=Emulator(args.image)
 while True:
-	user=shlex.split(input(":%s>"%emu.pwd))
+	user=shlex.split(input("(emulador):%s>"%emu.pwd))
 	if len(user)==0:
 		continue
 	if user[0]=="exit":

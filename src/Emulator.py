@@ -16,7 +16,7 @@ class Emulator:
 			"ls":self.ls
 		}
 		# self.root=self.fs.getFileTree()
-		self.root=FileTree(None,"")
+		self.root=FileTree()
 		self.act=self.root
 		self.pwd="/"
 	def cli(self,*args):
