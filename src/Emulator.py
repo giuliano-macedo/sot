@@ -16,7 +16,7 @@ class Emulator:
 			"ls":self.ls
 		}
 		# self.root=self.fs.getFileTree()
-		self.root=FileTree()
+		self.root=FileTree(None,"")
 		self.act=self.root
 		self.pwd="/"
 	def cli(self,*args):
@@ -30,6 +30,9 @@ class Emulator:
 	#
 	def cd(self,filename):
 		p=self.root if path.parse(filename)[0]=="/" else self.act
+		
+		self.act=p.get(filename)
+		self.pwd=self.act.pathName()
 	def ls(self,p=None):
 		if p!=None:
 			pass
