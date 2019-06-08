@@ -9,7 +9,7 @@ class FileTree:
 			self.t[".."]=parent
 		else:
 			self.t[".."]=None
-		# self.t["."]=self
+		self.t["."]=self
 	def __traverse(self,p):
 		ans=self
 		for t in p[:-1]:
