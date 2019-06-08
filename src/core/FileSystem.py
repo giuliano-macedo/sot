@@ -1,6 +1,12 @@
 from . import BitMap
 from math import ceil
 import struct
+def parseBlock(buffer):
+	flag=buffer[0]
+	if flag==0:#FileTree
+	
+	else:#File
+
 class FileSystem:
 	magic=b"\x00\x05\x0a" #05A
 	blocksize=512
@@ -22,9 +28,14 @@ class FileSystem:
 		self.scanDirectories()
 	def updateBlockLocation(self):
 		self.blocklocation=self.f.tell()//self.blocksize
+	def readBlock(self):
+		self.gotoBlock(self.blocklocation)
+		self.blocklocation+=1
+		return self.f.read(self.blocksize)
 	def gotoBlock(self,n):
 		self.blocklocation=n
 		self.f.seek(self.blocklocation*self.blocksize)
 	def __newDisk(self,disksize):
 		disksize=int(disksize)
-	
+	def scanDirectories(self):
+		obj=parseBlock(self.readBlock())
