@@ -1,40 +1,56 @@
 from . import path
 from . import File
+from . import BLOCKSIZE
+from . import Blocks
+import struct
+
 class FileTree:
-	def __init__(self,t=None,name=None,parent=None):
-		self.t={} if t==None else t
-		self.name=name if name!=None else ""
-		if parent!=None:
-			if type(parent)!=FileTree:raise TypeError("parent must be FileTree")
-			self.t[".."]=parent
-		else:
-			self.t[".."]=None
-		self.t["."]=self
-	def __traverse(self,p):
-		ans=self
-		for t in p[:-1]:
-			ans=ans.t.get(t,None)
-			if type(ans)!=FileTree:raise NotADirectoryError(ans.name)
-		return ans
-	def set(self,k,v):
-		p=path.parse(k)
-		act=self.__traverse(p)
-		if(type(v)==FileTree):
-			v.t[".."]=act
-			v.name=p[-1]
-		act.t[p[-1]]=v
-	def get(self,f):
-		p=path.parse(f)
-		act=self.__traverse(p)
-		return act.t.get(p[-1],None)
-	def pathName(self):
-		ans=[]
-		aux=self
-		while(aux!=None):
-			ans.append(aux.name)
-			aux=aux.t[".."]
-		return path.join(ans[::-1])
+	def new_block(blocks,name,index):
+		buffer=bytearray(BLOCKSIZE)
+		Blocks.set_metadata(buffer,True,name)
+		blocks.set(index,buffer)
+	def __init__(self,blocks,index):
+		self.blocks=blocks
+		self.index=index
+		self.children=dict()#name->(isdir,index)
+		
+		buffer=self.blocks.get(index)
+		isdir,self.name=Blocks.get_metadata(buffer)
+		if not isdir:
+			raise TypeError("bloco de formato incorreto")
+		for i in range(64,len(buffer),4):
+			index=struct.unpack("I",buffer[i:i+4])[0]
+			if index==0:
+				break
+			isdir,name=Blocks.get_metadata(self.blocks.get(index,64))
+			self.children[name]=(isdir,index)
+	def get_children_name(self):
+		return list(self.children.keys())
+	def get(self,name):
+		ans=self.children.get(name,None)
+		if ans==None:
+			return ans
+		return {"isdir":ans[0],"index":ans[1]}
+	def __add(self,name,isdir,index):
+		buffer=self.blocks.get(self.index)
+		for i in range(64,len(buffer),4):
+			aux=struct.unpack("I",buffer[i:i+4])[0]
+			if aux==0:
+				#update on block list of indexes
+				buffer[i:i+4]=struct.pack("I",index)
+				self.blocks.set(self.index,buffer)
+				#
+				self.children[name]=(isdir,index)
+				return
+		raise RuntimeException("Limite de 112 itens alcançado")
+	def add_dir(self,name,index):
+		self.__add(name,True,index)
+		FileTree.new_block(self.blocks,name,index)
+	def add_file(self,name,data_generator,indexes):
+		self.__add(name,False,indexes[0])
+		File.new_block(self.blocks,name,data_generator,indexes)
+
 	def __str__(self):
-		return "FileTree:(%s)"%str(self.t)
+		return "FileTree:(name=%s,index=%s)"%(self.name,self.index)
 	def __repr__(self):
 		return str(self)

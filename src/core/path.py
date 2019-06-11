@@ -1,6 +1,7 @@
-#todo
 def parse(p):
-	return p.split("/")
+	ans=p.split("/")
+	return ans
+def split(p):
+	return parse(p)
 def join(pl):
 	return "/".join(pl)
-#

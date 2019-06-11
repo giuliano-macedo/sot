@@ -1,11 +1,9 @@
-from core import FileSystem,File
+from core import FileSystem
+from core import path
 
-#removeme
-from core import FileTree,path
-#
 class Emulator:
-	def __init__(self,filename):
-		#self.fs=FileSystem(filename)
+	def __init__(self,filename,n):
+		self.fs=FileSystem(filename,n)
 		self.cmdhooks={
 			"pwd":self.pwd,
 			"mkdir":self.mkdir,
@@ -15,64 +13,53 @@ class Emulator:
 			"cd":self.cd,
 			"ls":self.ls
 		}
-		# self.root=self.fs.getFileTree()
-		self.root=FileTree()
-		self.act=self.root
-		self.pwd="/"
 	def cli(self,*args):
 		f=self.cmdhooks.get(args[0],None)
 		if f==None:
 			return "Command not found (%s)"%args[0]
 		return f(*(args[1::]))
-	# changeMe
-	def __isdir(self,f):
-		return type(f)==str
-	#
+	
 	def cd(self,filename):
-		p=self.root if path.parse(filename)[0]=="/" else self.act
-		
-		self.act=p.get(filename)
-		self.pwd=self.act.pathName()
-	def ls(self,p=None):
-		if p!=None:
-			pass
-			#todo
-		return "\n".join(self.act.t.keys())
+		course=path.parse(filename)
+		backup=self.fs.stack
+		try:
+			if course[0]=="":
+				while len(self.fs.stack)!=1:
+					self.fs.chdir("..")
+			for c in course[1::]:
+				self.fs.chdir(c)
+		except Exception as e:
+			self.fs.stack=backup
+			raise e
+	def __cdIfNeeded(self,course,removelast):
+		course=path.split(course)
+		if removelast:
+			course.pop()
+		self.cd(path.join(course))
 
+	def ls(self,course=None):
+		if course!=None:
+			backup=self.fs.stack
+			__cdIfNeeded(course)
+			items=self.fs.get_topdir().get_children_name()
+			self.fs.stack=backup
+		else:
+			items=self.fs.get_topdir().get_children_name()
+		return "\n".join([".",".."]+items)
 
 	def pwd(self):
-		return self.pwd
+		return self.fs.pwd()
 
 	def mkdir(self,filename):
-		# self.fs.mkdir(filename)
-		#changeMe
-		p=self.root if path.parse(filename)[0]=="/" else self.act
-		assert p.get(filename)==None,FileExistsError(filename)
-		p.set(filename,FileTree())
-		#
+		backup=self.fs.stack
+		self.__cdIfNeeded(filename,True)
+		self.fs.mkdir(path.split(filename)[-1])		
+		self.fs.stack=backup
+		
 	def touch(self,filename):
-		#self.fs.touch(filename)
-		#changeme
-		p=self.root if path.parse(filename)[0]=="/" else self.act
-		assert p.get(filename)==None,FileExistsError(filename)
-		p.set(filename,File(path.parse(filename)[-1]))
-		#
+		raise RuntimeError("todo")
 	def mv(self,f1,f2):
-		# self.fs.mv(f1,f2)
-		p=self.root if path.parse(f1)[0]=="/" else self.act
-		f1v=p.get(f1)
-		if(self.__isdir(f1v)):raise IsADirectoryError(f1)
-		assert p.get(f2)==None,FileExistsError(f2)
-
-		p.rm(f1)
-		p.set(f2,f1v)
-
+		raise RuntimeError("todo")
 	def rm(self,filename):
-		#self.fs.rm(f1)
-		p=self.root if path.parse(filename)[0]=="/" else self.act
-		p.rm(f1)
-
-
-	def __del__(self):
-		# del self.fs
-		pass
+		raise RuntimeError("todo")
+	
