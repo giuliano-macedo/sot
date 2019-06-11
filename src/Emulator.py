@@ -26,7 +26,8 @@ class Emulator:
 			if course[0]=="":
 				while len(self.fs.stack)!=1:
 					self.fs.chdir("..")
-			for c in course[1::]:
+				course.pop(0)
+			for c in course:
 				self.fs.chdir(c)
 		except Exception as e:
 			self.fs.stack=backup

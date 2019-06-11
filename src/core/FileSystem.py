@@ -35,6 +35,7 @@ class FileSystem:
 		self.blockstotal=self.disksize//BLOCKSIZE
 		self.bitmap=BitMap(self.f,(self.f.tell(),self.blockstotal//8))
 		offset=(sum(self.bitmap.bitrange)//BLOCKSIZE)+1
+		print(offset)
 		self.blocks=Blocks(self.f,offset,self.blockstotal)
 
 		self.stack=deque([FileTree(self.blocks,0)])
@@ -43,6 +44,7 @@ class FileSystem:
 	def get_root(self):
 		return self.stack[0]
 	def chdir(self,name):
+		print(name)
 		if name==".":
 			return
 		if name=="..":
@@ -50,21 +52,21 @@ class FileSystem:
 			return
 		todir=self.get_topdir().get(name)
 		if todir==None:
-			raise FileNotFoundError()
+			raise FileNotFoundError(name)
 		if not todir["isdir"]:
-			raise NotADirectoryError()
+			raise NotADirectoryError(name)
 		self.stack.append(FileTree(self.blocks,todir["index"]))
 	def pwd(self):
 		return path.join([ft.name for ft in self.stack])
 	def mkdir(self,name):
 		actdir=self.get_topdir()
 		if actdir.get(name)!=None:
-			raise FileExistsError()
+			raise FileExistsError(name)
 		actdir.add_dir(name,*self.bitmap.alloc(1))
 	def newfile(self,name,data_generator):
 		actdir=self.get_topdir()
 		if actdir.get(name)!=None:
-			raise FileExistsError()
+			raise FileExistsError(name)
 		freeblocks=self.bitmap.alloc(ceil(len(data_generator)/BLOCKSIZE))
 		actdir.add_file(name,data_generator,freeblocks)
 	def __del__(self):

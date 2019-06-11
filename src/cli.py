@@ -64,11 +64,14 @@ while True:
 	#todo
 	except NotADirectoryError as e:
 		print("erro: %s não é um diretório"%e)
+	except FileExistsError as e:
+		print("erro: %s já existe"%e)
+	except NotADirectoryError as e:
+		print("erro %s não é um diretorio"%e)
 	except OSError as e:
 		print("erro: %s"%e)
 	except Exception as e:
 		raise e
-	#
 del emu #só por preucação
 
 
