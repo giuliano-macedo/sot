@@ -4,16 +4,19 @@ from argparse import ArgumentParser
 app=Flask(__name__)
 @app.route("/webservice")
 def webservice():
-	fs=FileSystem(args.image)
-	ans={
-		"status":"ok",
-		"bitarray":fs.bitmap.bitstr(),
-		"allocset":list(fs.bitmap.allocblocks),
-		"freeset": list(fs.bitmap.freeblocks),
-		"diskpercentage":fs.bitmap.getPercentageFull()
-	}
-	return jsonify(ans)
+	try:
+		fs=FileSystem(args.image)
+		ans={
+			"status":"ok",
+			"bitarray":fs.bitmap.bitstr(),
+			"allocset":list(fs.bitmap.allocblocks),
+			"freeset": list(fs.bitmap.freeblocks),
+			"diskpercentage":fs.bitmap.getPercentageFull()
+		}
+	except Exception as e:
+		ans={"status":"err","msg":str(e)}
 
+	return jsonify(ans)
 @app.route("/")
 def index():
 	with open("web/index.html") as f:
