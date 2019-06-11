@@ -35,7 +35,7 @@ class FileSystem:
 		self.blockstotal=self.disksize//BLOCKSIZE
 		self.bitmap=BitMap(self.f,(self.f.tell(),self.blockstotal//8))
 		offset=ceil(sum(self.bitmap.bitrange)/BLOCKSIZE)
-		self.bitmap.alloc(offset)
+		if len(self.bitmap.allocblocks)==1:self.bitmap.alloc(offset)
 		self.blocks=Blocks(self.f,offset,self.blockstotal)
 
 		self.stack=deque([FileTree(self.blocks,0)])

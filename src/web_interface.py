@@ -1,5 +1,5 @@
 from core import FileSystem
-from flask import Flask,jsonify
+from flask import Flask,jsonify,send_from_directory
 from argparse import ArgumentParser
 app=Flask(__name__)
 @app.route("/webservice")
@@ -13,14 +13,16 @@ def webservice():
 			"freeset": list(fs.bitmap.freeblocks),
 			"diskpercentage":fs.bitmap.getPercentageFull()
 		}
+		del fs
 	except Exception as e:
 		ans={"status":"err","msg":str(e)}
 
 	return jsonify(ans)
-@app.route("/")
-def index():
-	with open("web/index.html") as f:
-		return f.read()
+@app.route('/<path:path>')
+def send(path):
+    return send_from_directory('web', path)
+
+
 def fileExists(filename):
 	with open(filename) as f:pass
 	return filename

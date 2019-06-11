@@ -15,7 +15,9 @@ class Blocks:
 		return bytearray(self.f.read(l))
 	def set(self,i,buffer):
 		self.__moveToBlock(i)
-		return self.f.write(buffer)
+		ans=self.f.write(buffer)
+		self.f.flush()
+		return ans
 	def get_metadata(buffer):
 		flag=buffer[0]
 		name=buffer[1:64].decode("utf-8").rstrip("\0")

@@ -1,9 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Test</title>
+	<title>Trabalho de Sistemas Operacionais II</title>
+	<link type="text/css" href="style.css" rel="stylesheet" ></link>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-	oi
+	<span id="foo"></span>
+	<table>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
+	<script>
+		setInterval(
+			function(){
+				$.getJSON("webservice",function(data){
+					var tds=$("td");
+					for(var i=0;i<8;i++){
+						var b=data.bitarray[i];
+						if(b=="0")
+							tds[i].innerHTML="<font color='green'>0</font>"
+						else 
+							tds[i].innerHTML="<font color='red'>1</font>"
+					}
+				})
+			}
+		,1/60.)
+	</script>
 </body>
 </html>
