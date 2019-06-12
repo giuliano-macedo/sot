@@ -19,19 +19,32 @@ def lorem_gen(nbytes):
 			break
 
 class Emulator:
-	def __init__(self,filename,n):
+	def __init__(self,filename,n,cmdlayout):
 		self.fs=FileSystem(filename,n)
-		self.cmdhooks={
-			"aqui":self.pwd,
-			"criarpasta":self.mkdir,
-			"deleta":self.rm,
-			"mudarpasta":self.cd,
-			"listar":self.ls,
-			"lorem":self.lorem,
-			"ler":self.cat,
-			"arqtam":self.get_file_size,
-			"arqbloco":self.cat_block
-		}
+		if cmdlayout=="linux":
+			self.cmdhooks={
+				"pwd":self.pwd,
+				"mkdir":self.mkdir,
+				"rm":self.rm,
+				"cd":self.cd,
+				"ls":self.ls,
+				"lorem":self.lorem,
+				"cat":self.cat,
+				"fsize":self.get_file_size,
+				"fblock":self.cat_block
+			}
+		else:
+			self.cmdhooks={
+				"aqui":self.pwd,
+				"criarpasta":self.mkdir,
+				"deleta":self.rm,
+				"mudarpasta":self.cd,
+				"listar":self.ls,
+				"lorem":self.lorem,
+				"ler":self.cat,
+				"arqtam":self.get_file_size,
+				"arqbloco":self.cat_block
+			}
 	def cli(self,*args):
 		f=self.cmdhooks.get(args[0],None)
 		if f==None:

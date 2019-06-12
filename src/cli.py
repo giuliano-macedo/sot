@@ -7,6 +7,7 @@ from utils import nist_str_to_bytes
 parser=ArgumentParser()
 parser.add_argument("image",help="image file of the disk",type=str)
 parser.add_argument("--n",help="size in bytes of the new disk image",type=nist_str_to_bytes)
+parser.add_argument("--l",help="emulator commands eg: --l linux",type=str)
 args=parser.parse_args()
 
 if not os.path.isfile(args.image):
@@ -21,7 +22,7 @@ if not os.path.isfile(args.image):
 	with open(args.image,"w") as f:
 		f.write("")
 
-emu=Emulator(args.image,args.n)
+emu=Emulator(args.image,args.n,args.l)
 while True:
 	try:
 		user=shlex.split(input("(emulador):%s>"%emu.pwd()))
