@@ -57,7 +57,7 @@ class File:
 	def cat_block(blocks,index,n):
 		fs=File.get_file_size(blocks,index)
 		nblocks=ceil(fs/BLOCKSIZE)
-		if not (1<=n<=nblocks+1):
+		if not (1<=n<nblocks+1):
 			raise OSError("argumento invalido, n deve ser 1<=n<%i"%(nblocks+1))
 		n-=1
 		buffer=blocks.get(index)
