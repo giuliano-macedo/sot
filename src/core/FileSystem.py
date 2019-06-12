@@ -76,6 +76,8 @@ class FileSystem:
 		if obj==None:
 			raise FileNotFoundError(name)
 		if obj["isdir"]:
+			if len(FileTree(self.blocks,obj["index"]).children)!=0:
+				raise OSError("impossível remover diretório não vazio")
 			self.bitmap.free([obj["index"]])
 		else:
 			self.bitmap.free(File.get_all_indexes(self.blocks,obj["index"]))
