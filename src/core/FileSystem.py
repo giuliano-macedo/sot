@@ -46,9 +46,10 @@ class FileSystem:
 	def chdir(self,name):
 		if name==".":
 			return
-		if name=="..":
-			self.stack.pop()
-			return
+		if len(self.stack)!=1:
+			if name=="..":
+				self.stack.pop()
+				return
 		todir=self.get_topdir().get(name)
 		if todir==None:
 			raise FileNotFoundError(name)
