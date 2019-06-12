@@ -1,3 +1,28 @@
 body{
-	background-color: black;
+	padding-left: 1em;
+	/* background-color:black; */
+	/* font-weight: bold; */
+	font-family: Noto Sans, sans-serif;
+	font-size: 1.2em;
+	background-image: url(backgroud.jpg);
+	/* background-repeat: no-repeat; */
+	/* background-position-x: 30em; */
+	/* background-position: 10em; */
+}
+
+table { 
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+#page td {
+   padding:0; margin:0;
+}
+
+#page {
+   border-collapse: collapse;
+}
+
+h2{
+	text-align: center;
 }

@@ -1,3 +1,28 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+	<title>Trabalho de Sistemas Operacionais II</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+	<span id="foo"></span>
+	<table></table>
+	<div id="status">
+	</div>
+	<script>
+		setInterval(
+			function(){
+				$.getJSON("webservice",function(data){
+					$("#status").html("STATUS ===> "+JSON.stringify(data.status));
+					console.log("josue boiolada",data.status)
+					console.log(data.bitarray)
+					$("#foo").html(JSON.stringify(data));
+				})
+			}
+		,1/60.)
+	</script>
+</body>
+</html> -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +31,10 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
-	<span id="foo"></span>
+	<h2>Funcionamento do Emulador do OSA-FS</h2>
+
+	<div id="allocset"></div><br>
+	<div id="bitmap"></div>
 	<table>
 		<tr>
 			<td></td>
@@ -18,19 +46,70 @@
 			<td></td>
 			<td></td>
 		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>							
 	</table>
+	<br>
+	<div id="diskpercentage"></div><br>
+	<div id="freeset"></div><br>
+	<div id="status"></div><br>
+	<!-- {"allocset":[0,1],"bitarray":"1100000000000000","diskpercentage":12.5,"freeset":[2,3,4,5,6,7,8,9,10,11,12,13,14,15],"status":"ok"} -->
+	
 	<script>
 		setInterval(
 			function(){
 				$.getJSON("webservice",function(data){
+					// console.log("josue boiolada",data.status)
+					// console.log(data.bitarray)
+					$("#allocset").html("Conjunto de blocos <b>ALOCADOS</b>: "+JSON.stringify(data.allocset).fontcolor('black'));
+					
+					$("#bitmap").html("Bitmap: <font color='green'> 0 = Livre</font>, <font color='red'>1 = Ocupado</font>",+JSON.stringify(data.bitarray));
 					var tds=$("td");
-					for(var i=0;i<8;i++){
-						var b=data.bitarray[i];
-						if(b=="0")
-							tds[i].innerHTML="<font color='green'>0</font>"
-						else 
-							tds[i].innerHTML="<font color='red'>1</font>"
-					}
+					for(var i=0;i<32;i++){
+						if(data.bitarray[i]=="0"){
+							tds[i].style.backgroundColor = "green"
+							tds[i].style.padding = "0px 20px"				
+							tds[i].style.border = "solid 2px"			
+							tds[i].innerHTML="<font color='black'>0</font>"
+						}						
+						else{
+							tds[i].style.backgroundColor = "red"
+							tds[i].style.padding = "0px 20px"
+							tds[i].style.border = "solid 2px"
+							tds[i].innerHTML="<font color='black'>1</font>"
+						}						
+					}	
+					$("#diskpercentage").html("Espaço utilizado: "+JSON.stringify(data.diskpercentage).fontcolor('blue').bold()+"<font color='blue'><b>%</b></font>");
+					$("#freeset").html("Conjunto de blocos <b>LIVRES</b>: "+JSON.stringify(data.freeset));
+					// $("#status").html("STATUS: "+JSON.stringify(data.status).fontcolor('green').toUpperCase());
 				})
 			}
 		,1/60.)
