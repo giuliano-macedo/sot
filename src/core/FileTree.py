@@ -21,7 +21,7 @@ class FileTree:
 		for i in range(64,len(buffer),4):
 			index=struct.unpack("I",buffer[i:i+4])[0]
 			if index==0:
-				break
+				continue
 			isdir,name=Blocks.get_metadata(self.blocks.get(index,64))
 			self.children[name]=(isdir,index)
 	def get_children_name(self):
@@ -29,7 +29,7 @@ class FileTree:
 	def get(self,name):
 		ans=self.children.get(name,None)
 		if ans==None:
-			return ans
+			return None
 		return {"isdir":ans[0],"index":ans[1]}
 	def __add(self,name,isdir,index):
 		buffer=self.blocks.get(self.index)
@@ -43,12 +43,26 @@ class FileTree:
 				self.children[name]=(isdir,index)
 				return
 		raise RuntimeException("Limite de 112 itens alcançado")
+	def remove(self,name):
+		index=self.children.get(name,None)[1]
+		if index==None:
+			raise FileNotFoundError(name)
+		buffer=self.blocks.get(self.index)
+		for i in range(64,len(buffer),4):
+			aux=struct.unpack("I",buffer[i:i+4])[0]
+			if aux==index:
+				buffer[i:i+4]=struct.pack("I",0)
+				self.blocks.set(self.index,buffer)
+				del self.children[name]
+				return
+		raise RuntimeError("Entrada existia no dict mas não existia no buffer")
+	
 	def add_dir(self,name,index):
 		self.__add(name,True,index)
 		FileTree.new_block(self.blocks,name,index)
-	def add_file(self,name,data_generator,indexes):
+	def add_file(self,name,data_generator,nbytes,indexes):
 		self.__add(name,False,indexes[0])
-		File.new_block(self.blocks,name,data_generator,indexes)
+		File.new_block(self.blocks,name,data_generator,nbytes,indexes)
 
 	def __str__(self):
 		return "FileTree:(name=%s,index=%s)"%(self.name,self.index)

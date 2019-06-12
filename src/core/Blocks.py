@@ -9,11 +9,15 @@ class Blocks:
 		if i<=0<self.blockstotal+1:
 			raise IndexError()
 		self.f.seek(i*BLOCKSIZE)
-	def get(self,i,l=None):
+	def get(self,i,l=None,buffer=None):
 		l=BLOCKSIZE if l==None else l
+		buffer=bytearray(l) if buffer==None else buffer
 		self.__moveToBlock(i)
-		return bytearray(self.f.read(l))
+		buffer[0:l]=self.f.read(l)
+		return buffer
 	def set(self,i,buffer):
+		# print("writing block ",i)
+		# print(buffer)
 		self.__moveToBlock(i)
 		ans=self.f.write(buffer)
 		self.f.flush()
@@ -29,4 +33,4 @@ class Blocks:
 		l=len(name)
 		if l>64:
 			raise RuntimeError("nome do diretorio/arquivo é maior que 64")
-		buffer[1:l]=name
+		buffer[1:l+1]=name

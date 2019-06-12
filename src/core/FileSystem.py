@@ -44,7 +44,6 @@ class FileSystem:
 	def get_root(self):
 		return self.stack[0]
 	def chdir(self,name):
-		print(name)
 		if name==".":
 			return
 		if name=="..":
@@ -57,18 +56,48 @@ class FileSystem:
 			raise NotADirectoryError(name)
 		self.stack.append(FileTree(self.blocks,todir["index"]))
 	def pwd(self):
+		if len(self.stack)==1:
+			return "/"
 		return path.join([ft.name for ft in self.stack])
 	def mkdir(self,name):
 		actdir=self.get_topdir()
 		if actdir.get(name)!=None:
 			raise FileExistsError(name)
 		actdir.add_dir(name,*self.bitmap.alloc(1))
-	def newfile(self,name,data_generator):
+	def newfile(self,name,data_generator,nbytes):
 		actdir=self.get_topdir()
 		if actdir.get(name)!=None:
 			raise FileExistsError(name)
-		freeblocks=self.bitmap.alloc(ceil(len(data_generator)/BLOCKSIZE))
-		actdir.add_file(name,data_generator,freeblocks)
+		freeblocks=self.bitmap.alloc(ceil(nbytes/BLOCKSIZE))
+		actdir.add_file(name,data_generator,nbytes,freeblocks)
+	def rm(self,name):
+		actdir=self.get_topdir()
+		obj=actdir.get(name)
+		if obj==None:
+			raise FileNotFoundError(name)
+		if obj["isdir"]:
+			self.bitmap.free([obj["index"]])
+		else:
+			self.bitmap.free(File.get_all_indexes(self.blocks,obj["index"]))
+		actdir.remove(name)
+	def cat(self,name):
+		actdir=self.get_topdir()
+		obj=actdir.get(name)
+		if obj==None or obj["isdir"]:
+			raise FileNotFoundError(name)
+		File.cat(self.blocks,obj["index"])
+	def get_file_size(self,name):
+		actdir=self.get_topdir()
+		obj=actdir.get(name)
+		if obj==None or obj["isdir"]:
+			raise FileNotFoundError(name)
+		return File.get_file_size(self.blocks,obj["index"])
+	def cat_block(self,name,n):
+		actdir=self.get_topdir()
+		obj=actdir.get(name)
+		if obj==None or obj["isdir"]:
+			raise FileNotFoundError(name)
+		return File.cat_block(self.blocks,obj["index"],n)
 	def __del__(self):
 		self.f.close()
 

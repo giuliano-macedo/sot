@@ -1,5 +1,22 @@
 from core import FileSystem
 from core import path
+from utils import nist_str_to_bytes
+import lorem
+def lorem_gen(nbytes):
+	state=0
+	while True:
+		if state==0:
+			buffer=lorem.text().encode("utf-8")
+			i=0
+			state+=1
+		if state==1:
+			if i==len(buffer)-1:
+				state=0
+			yield buffer[i]
+			i+=1
+			nbytes-=1
+		if nbytes==0:
+			break
 
 class Emulator:
 	def __init__(self,filename,n):
@@ -7,60 +24,51 @@ class Emulator:
 		self.cmdhooks={
 			"pwd":self.pwd,
 			"mkdir":self.mkdir,
-			"touch":self.touch,
-			"mv":self.mv,
 			"rm":self.rm,
 			"cd":self.cd,
-			"ls":self.ls
+			"ls":self.ls,
+			"lorem":self.lorem,
+			"cat":self.cat,
+			"fsize":self.get_file_size,
+			"fblock":self.cat_block
 		}
 	def cli(self,*args):
 		f=self.cmdhooks.get(args[0],None)
 		if f==None:
-			return "Command not found (%s)"%args[0]
-		return f(*(args[1::]))
+			return "Commando não encontrado (%s)"%args[0]
+		try:
+			ans=f(*(args[1:]))
+		except TypeError as e:
+			if "required positional argument" in str(e):
+				return "número incorreto de argumentos para o comando %s"%args[0]
+			raise e
+		return ans
 	
 	def cd(self,filename):
-		course=path.parse(filename)
-		backup=self.fs.stack
-		try:
-			if course[0]=="":
-				while len(self.fs.stack)!=1:
-					self.fs.chdir("..")
-				course.pop(0)
-			for c in course:
-				self.fs.chdir(c)
-		except Exception as e:
-			self.fs.stack=backup
-			raise e
-	def __cdIfNeeded(self,course,removelast):
-		course=path.split(course)
-		if removelast:
-			course.pop()
-		self.cd(path.join(course))
-
-	def ls(self,course=None):
-		if course!=None:
-			backup=self.fs.stack
-			__cdIfNeeded(course)
-			items=self.fs.get_topdir().get_children_name()
-			self.fs.stack=backup
-		else:
-			items=self.fs.get_topdir().get_children_name()
-		return "\n".join([".",".."]+items)
+		self.fs.chdir(filename)
+		
+	def ls(self):
+		return "\n".join([".",".."]+self.fs.get_topdir().get_children_name())
 
 	def pwd(self):
 		return self.fs.pwd()
 
 	def mkdir(self,filename):
-		backup=self.fs.stack
-		self.__cdIfNeeded(filename,True)
-		self.fs.mkdir(path.split(filename)[-1])		
-		self.fs.stack=backup
+		self.fs.mkdir(filename)		
 		
-	def touch(self,filename):
-		raise RuntimeError("todo")
-	def mv(self,f1,f2):
-		raise RuntimeError("todo")
 	def rm(self,filename):
-		raise RuntimeError("todo")
+		self.fs.rm(filename)
+	def lorem(self,filename,nbytes):
+		try:
+			nbytes=nist_str_to_bytes(nbytes)
+		except TypeError as e:
+			raise OSError("formato incorreto para %s"%nbytes)
+		self.fs.newfile(filename,lorem_gen(nbytes),nbytes)
+	def cat(self,filename):
+		self.fs.cat(filename)
+		print()
+	def get_file_size(self,filename):
+		print("Tamanho do arquivo \"%s\" : %ib"%(filename,self.fs.get_file_size(filename)))
+	def cat_block(self,filename,n):
+		self.fs.cat_block(filename,int(n))
 	

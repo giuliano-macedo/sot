@@ -27,7 +27,8 @@ class BitMap:
 		
 		self.f.seek(self.bitrange[0])
 		self.bits.tofile(self.f)
-		
+		self.f.flush()
+
 		self.f.seek(t)
 
 	def alloc(self,n):
