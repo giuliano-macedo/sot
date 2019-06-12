@@ -48,7 +48,10 @@ class Emulator:
 		self.fs.chdir(filename)
 		
 	def ls(self):
-		return "\n".join([".",".."]+self.fs.get_topdir().get_children_name())
+		extras=["."]
+		if len(self.fs.stack)!=1:
+			extras.append("..")
+		return "\n".join(extras+self.fs.get_topdir().get_children_name())
 
 	def pwd(self):
 		return self.fs.pwd()
