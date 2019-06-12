@@ -23,15 +23,15 @@ class Emulator:
 		self.fs=FileSystem(filename,n)
 		if cmdlayout=="linux":
 			self.cmdhooks={
-				"pwd":self.pwd,
-				"mkdir":self.mkdir,
-				"rm":self.rm,
-				"cd":self.cd,
-				"ls":self.ls,
+				"aqui":self.pwd,
+				"criarpasta":self.mkdir,
+				"deleta":self.rm,
+				"mudarpasta":self.cd,
+				"listar":self.ls,
 				"lorem":self.lorem,
-				"cat":self.cat,
-				"fsize":self.get_file_size,
-				"fblock":self.cat_block
+				"ler":self.cat,
+				"arqtam":self.get_file_size,
+				"arqbloco":self.cat_block
 			}
 		else:
 			self.cmdhooks={
