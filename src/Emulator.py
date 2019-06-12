@@ -28,7 +28,7 @@ class Emulator:
 				"deleta":self.rm,
 				"mudarpasta":self.cd,
 				"listar":self.ls,
-				"lorem":self.lorem,
+				"novoarqaleat":self.lorem,
 				"ler":self.cat,
 				"arqtam":self.get_file_size,
 				"arqbloco":self.cat_block
