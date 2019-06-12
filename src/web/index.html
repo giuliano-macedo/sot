@@ -1,28 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-	<title>Trabalho de Sistemas Operacionais II</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
-<body>
-	<span id="foo"></span>
-	<table></table>
-	<div id="status">
-	</div>
-	<script>
-		setInterval(
-			function(){
-				$.getJSON("webservice",function(data){
-					$("#status").html("STATUS ===> "+JSON.stringify(data.status));
-					console.log("josue boiolada",data.status)
-					console.log(data.bitarray)
-					$("#foo").html(JSON.stringify(data));
-				})
-			}
-		,1/60.)
-	</script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,65 +10,42 @@
 
 	<div id="allocset"></div><br>
 	<div id="bitmap"></div>
-	<table>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>							
-	</table>
-	<br>
+	<table id="tabela-bitmap"></table>
+	<br />
 	<div id="diskpercentage"></div><br>
 	<div id="freeset"></div><br>
 	<div id="status"></div><br>
-	<!-- {"allocset":[0,1],"bitarray":"1100000000000000","diskpercentage":12.5,"freeset":[2,3,4,5,6,7,8,9,10,11,12,13,14,15],"status":"ok"} -->
 	
 	<script>
+		function createTable(n){
+			var trs=[];
+			while(n>0){
+				tds=[];
+				for(var j=0;j<8;j++){
+					if(n==0) break;
+					tds.push($("<td></td>"));
+					n--;
+				}
+				trs.push($("<tr></tr>").append(tds))
+			}
+			$("#tabela-bitmap").append(trs);
+		}
+		var isTableCreated=false;
 		setInterval(
 			function(){
 				$.getJSON("webservice",function(data){
-					// console.log("josue boiolada",data.status)
-					// console.log(data.bitarray)
+					if(data.status!="ok"){
+						alert(data.status+"\n"+data.err);
+					}
+					if(!isTableCreated){
+						createTable(data.bitarray.length);
+						isTableCreated=true;
+					}
 					$("#allocset").html("Conjunto de blocos <b>ALOCADOS</b>: "+JSON.stringify(data.allocset).fontcolor('black'));
 					
 					$("#bitmap").html("Bitmap: <font color='green'> 0 = Livre</font>, <font color='red'>1 = Ocupado</font>",+JSON.stringify(data.bitarray));
 					var tds=$("td");
-					for(var i=0;i<32;i++){
+					for(var i=0;i<data.bitarray.length;i++){
 						if(data.bitarray[i]=="0"){
 							tds[i].style.backgroundColor = "green"
 							tds[i].style.padding = "0px 20px"				

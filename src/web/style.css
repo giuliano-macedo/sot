@@ -4,10 +4,6 @@ body{
 	/* font-weight: bold; */
 	font-family: Noto Sans, sans-serif;
 	font-size: 1.2em;
-	background-image: url(backgroud.jpg);
-	/* background-repeat: no-repeat; */
-	/* background-position-x: 30em; */
-	/* background-position: 10em; */
 }
 
 table { 
