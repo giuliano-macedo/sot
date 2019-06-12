@@ -22,15 +22,15 @@ class Emulator:
 	def __init__(self,filename,n):
 		self.fs=FileSystem(filename,n)
 		self.cmdhooks={
-			"pwd":self.pwd,
-			"mkdir":self.mkdir,
-			"rm":self.rm,
-			"cd":self.cd,
-			"ls":self.ls,
+			"aqui":self.pwd,
+			"criarpasta":self.mkdir,
+			"deleta":self.rm,
+			"mudarpasta":self.cd,
+			"listar":self.ls,
 			"lorem":self.lorem,
-			"cat":self.cat,
-			"fsize":self.get_file_size,
-			"fblock":self.cat_block
+			"ler":self.cat,
+			"arqtam":self.get_file_size,
+			"arqbloco":self.cat_block
 		}
 	def cli(self,*args):
 		f=self.cmdhooks.get(args[0],None)
@@ -48,10 +48,7 @@ class Emulator:
 		self.fs.chdir(filename)
 		
 	def ls(self):
-		extras=["."]
-		if len(self.fs.stack)!=1:
-			extras.append("..")
-		return "\n".join(extras+self.fs.get_topdir().get_children_name())
+		return "\n".join([".",".."]+self.fs.get_topdir().get_children_name())
 
 	def pwd(self):
 		return self.fs.pwd()
