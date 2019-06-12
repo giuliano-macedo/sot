@@ -32,7 +32,8 @@ class BitMap:
 		self.f.seek(t)
 
 	def alloc(self,n):
-		assert 1<=n<self.size
+		if not (1<=n<self.size):
+			raise OSError("espaço insuficiente para operação")
 		ans=[]
 		for i in self.freeblocks:
 			if len(ans)==n:

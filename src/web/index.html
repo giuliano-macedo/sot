@@ -35,7 +35,7 @@
 			function(){
 				$.getJSON("webservice",function(data){
 					if(data.status!="ok"){
-						alert(data.status+"\n"+data.err);
+						alert(data.status+"\n"+data.msg);
 					}
 					if(!isTableCreated){
 						createTable(data.bitarray.length);
@@ -50,13 +50,13 @@
 							tds[i].style.backgroundColor = "green"
 							tds[i].style.padding = "0px 20px"				
 							tds[i].style.border = "solid 2px"			
-							tds[i].innerHTML="<font color='black'>0</font>"
+							tds[i].innerHTML="<font color='white'>0</font>"
 						}						
 						else{
-							tds[i].style.backgroundColor = "red"
+							tds[i].style.backgroundColor = "#FE0101"
 							tds[i].style.padding = "0px 20px"
 							tds[i].style.border = "solid 2px"
-							tds[i].innerHTML="<font color='black'>1</font>"
+							tds[i].innerHTML="<font color='white'>1</font>"
 						}						
 					}	
 					$("#diskpercentage").html("Espaço utilizado: "+JSON.stringify(data.diskpercentage).fontcolor('blue').bold()+"<font color='blue'><b>%</b></font>");
